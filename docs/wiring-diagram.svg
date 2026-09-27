@@ -1,0 +1,183 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1520 930" width="1520" height="930" font-family="Menlo, Consolas, monospace">
+  <defs>
+    <pattern id="dots" x="1195" y="330" width="22.5" height="22.5" patternUnits="userSpaceOnUse">
+      <circle cx="11.25" cy="11.25" r="4.6" fill="#ff5252"/>
+    </pattern>
+  </defs>
+
+  <rect width="1520" height="930" fill="#ffffff"/>
+
+  <!-- ══ Title ══ -->
+  <text x="60" y="56" font-size="30" font-weight="bold" fill="#1a237e">Pet Watch — connection diagram</text>
+  <text x="60" y="84" font-size="16" fill="#546e7a">ESP32-C6-DevKitC-1  ·  HC-SR04 ultrasonic  ·  MAX7219 dot matrix</text>
+  <line x1="60" y1="100" x2="1460" y2="100" stroke="#cfd8dc" stroke-width="2"/>
+
+  <!-- ══ Rails ══ -->
+  <line x1="70" y1="156" x2="1450" y2="156" stroke="#d32f2f" stroke-width="7" stroke-linecap="round"/>
+  <rect x="72" y="124" width="74" height="26" rx="5" fill="#d32f2f"/>
+  <text x="109" y="143" font-size="15" font-weight="bold" fill="#ffffff" text-anchor="middle">5 V</text>
+  <text x="1180" y="128" font-size="14" fill="#d32f2f">5 V rail — one supply feeds everything</text>
+
+  <line x1="70" y1="700" x2="1450" y2="700" stroke="#455a64" stroke-width="7" stroke-linecap="round"/>
+  <rect x="72" y="668" width="74" height="26" rx="5" fill="#455a64"/>
+  <text x="109" y="687" font-size="15" font-weight="bold" fill="#ffffff" text-anchor="middle">GND</text>
+  <text x="1180" y="722" font-size="14" fill="#455a64">Common ground — required</text>
+
+  <!-- ══════════════════ HC-SR04 ══════════════════ -->
+  <rect x="90" y="230" width="220" height="330" rx="10" fill="#f5f5f5" stroke="#455a64" stroke-width="3"/>
+  <text x="200" y="264" font-size="21" font-weight="bold" fill="#263238" text-anchor="middle">HC-SR04</text>
+  <text x="200" y="286" font-size="12.5" fill="#78909c" text-anchor="middle">ultrasonic · 4 pin</text>
+
+  <circle cx="152" cy="350" r="34" fill="#eceff1" stroke="#90a4ae" stroke-width="3"/>
+  <circle cx="152" cy="350" r="22" fill="#cfd8dc"/>
+  <circle cx="152" cy="350" r="10" fill="#90a4ae"/>
+  <circle cx="248" cy="350" r="34" fill="#eceff1" stroke="#90a4ae" stroke-width="3"/>
+  <circle cx="248" cy="350" r="22" fill="#cfd8dc"/>
+  <circle cx="248" cy="350" r="10" fill="#90a4ae"/>
+
+  <line x1="310" y1="420" x2="352" y2="420" stroke="#d32f2f" stroke-width="3"/>
+  <line x1="310" y1="460" x2="352" y2="460" stroke="#1565c0" stroke-width="3"/>
+  <line x1="310" y1="500" x2="352" y2="500" stroke="#00838f" stroke-width="3"/>
+  <line x1="310" y1="540" x2="352" y2="540" stroke="#455a64" stroke-width="3"/>
+  <circle cx="352" cy="420" r="5" fill="#d32f2f"/>
+  <circle cx="352" cy="460" r="5" fill="#1565c0"/>
+  <circle cx="352" cy="500" r="5" fill="#00838f"/>
+  <circle cx="352" cy="540" r="5" fill="#455a64"/>
+  <text x="300" y="426" font-size="15" font-weight="bold" fill="#263238" text-anchor="end">VCC</text>
+  <text x="300" y="466" font-size="15" font-weight="bold" fill="#263238" text-anchor="end">TRIG</text>
+  <text x="300" y="506" font-size="15" font-weight="bold" fill="#263238" text-anchor="end">ECHO</text>
+  <text x="300" y="546" font-size="15" font-weight="bold" fill="#263238" text-anchor="end">GND</text>
+
+  <!-- ══════════════════ ESP32-C6 ══════════════════ -->
+  <rect x="650" y="240" width="360" height="350" rx="10" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+  <text x="830" y="274" font-size="20" font-weight="bold" fill="#0d47a1" text-anchor="middle">ESP32-C6-DevKitC-1</text>
+  <text x="830" y="296" font-size="12.5" fill="#5472a0" text-anchor="middle">Espressif ESP32-C6</text>
+
+  <rect x="700" y="340" width="260" height="104" rx="6" fill="#cfd8dc" stroke="#78909c" stroke-width="2"/>
+  <rect x="700" y="326" width="260" height="14" rx="3" fill="#b0bec5"/>
+  <text x="830" y="390" font-size="13" font-weight="bold" fill="#37474f" text-anchor="middle">ESP32-C6-WROOM-1</text>
+  <text x="830" y="412" font-size="11" fill="#546e7a" text-anchor="middle">WiFi 6 · BLE · 802.15.4</text>
+
+  <rect x="795" y="590" width="70" height="24" rx="4" fill="#90a4ae" stroke="#607d8b" stroke-width="2"/>
+  <text x="830" y="632" font-size="12" fill="#546e7a" text-anchor="middle">USB-C</text>
+
+  <line x1="610" y1="420" x2="650" y2="420" stroke="#d32f2f" stroke-width="3"/>
+  <line x1="610" y1="460" x2="650" y2="460" stroke="#1565c0" stroke-width="3"/>
+  <line x1="610" y1="500" x2="650" y2="500" stroke="#00838f" stroke-width="3"/>
+  <line x1="610" y1="540" x2="650" y2="540" stroke="#455a64" stroke-width="3"/>
+  <circle cx="610" cy="420" r="5" fill="#d32f2f"/>
+  <circle cx="610" cy="460" r="5" fill="#1565c0"/>
+  <circle cx="610" cy="500" r="5" fill="#00838f"/>
+  <circle cx="610" cy="540" r="5" fill="#455a64"/>
+  <text x="662" y="416" font-size="14" font-weight="bold" fill="#263238">5V</text>
+  <text x="662" y="432" font-size="11" fill="#78909c">J1-14</text>
+  <text x="662" y="456" font-size="14" font-weight="bold" fill="#263238">GPIO20</text>
+  <text x="662" y="472" font-size="11" fill="#78909c">J3-8 · TRIG in</text>
+  <text x="662" y="496" font-size="14" font-weight="bold" fill="#263238">GPIO21</text>
+  <text x="662" y="512" font-size="11" fill="#78909c">J3-7 · ECHO in</text>
+  <text x="662" y="536" font-size="14" font-weight="bold" fill="#263238">GND</text>
+  <text x="662" y="552" font-size="11" fill="#78909c">J1-15</text>
+
+  <line x1="1010" y1="450" x2="1050" y2="450" stroke="#2e7d32" stroke-width="3"/>
+  <line x1="1010" y1="490" x2="1050" y2="490" stroke="#6a1b9a" stroke-width="3"/>
+  <line x1="1010" y1="530" x2="1050" y2="530" stroke="#ef6c00" stroke-width="3"/>
+  <circle cx="1050" cy="450" r="5" fill="#2e7d32"/>
+  <circle cx="1050" cy="490" r="5" fill="#6a1b9a"/>
+  <circle cx="1050" cy="530" r="5" fill="#ef6c00"/>
+  <text x="998" y="446" font-size="14" font-weight="bold" fill="#263238" text-anchor="end">GPIO7</text>
+  <text x="998" y="462" font-size="11" fill="#78909c" text-anchor="end">J1-6</text>
+  <text x="998" y="486" font-size="14" font-weight="bold" fill="#263238" text-anchor="end">GPIO10</text>
+  <text x="998" y="502" font-size="11" fill="#78909c" text-anchor="end">J1-10</text>
+  <text x="998" y="526" font-size="14" font-weight="bold" fill="#263238" text-anchor="end">GPIO6</text>
+  <text x="998" y="542" font-size="11" fill="#78909c" text-anchor="end">J1-5</text>
+
+  <!-- ══════════════════ MAX7219 ══════════════════ -->
+  <rect x="1228" y="206" width="114" height="26" rx="13" fill="#ef6c00"/>
+  <text x="1285" y="224" font-size="12.5" font-weight="bold" fill="#ffffff" text-anchor="middle">OPTIONAL</text>
+  <rect x="1150" y="240" width="270" height="350" rx="10" fill="#fff8e1" stroke="#ef6c00" stroke-width="3"/>
+  <text x="1285" y="274" font-size="20" font-weight="bold" fill="#e65100" text-anchor="middle">MAX7219</text>
+  <text x="1285" y="296" font-size="12.5" fill="#bf8f00" text-anchor="middle">8×8 dot matrix</text>
+
+  <rect x="1195" y="330" width="180" height="180" rx="4" fill="#212121"/>
+  <rect x="1195" y="330" width="180" height="180" rx="4" fill="url(#dots)"/>
+  <!-- the idle face the firmware draws: narrow eyes + a short activity bar -->
+  <circle cx="1228.75" cy="386.25" r="7" fill="#ffd54f"/>
+  <circle cx="1251.25" cy="386.25" r="7" fill="#ffd54f"/>
+  <circle cx="1228.75" cy="431.25" r="7" fill="#ffd54f"/>
+  <circle cx="1251.25" cy="431.25" r="7" fill="#ffd54f"/>
+  <circle cx="1318.75" cy="386.25" r="7" fill="#ffd54f"/>
+  <circle cx="1341.25" cy="386.25" r="7" fill="#ffd54f"/>
+  <circle cx="1318.75" cy="431.25" r="7" fill="#ffd54f"/>
+  <circle cx="1341.25" cy="431.25" r="7" fill="#ffd54f"/>
+  <circle cx="1206.25" cy="498.75" r="7" fill="#ffd54f"/>
+  <circle cx="1228.75" cy="498.75" r="7" fill="#ffd54f"/>
+  <circle cx="1251.25" cy="498.75" r="7" fill="#ffd54f"/>
+  <text x="1285" y="540" font-size="11" fill="#bf8f00" text-anchor="middle">idle face — eyes narrow, short bar</text>
+
+  <line x1="1100" y1="350" x2="1150" y2="350" stroke="#d32f2f" stroke-width="3"/>
+  <line x1="1100" y1="390" x2="1150" y2="390" stroke="#455a64" stroke-width="3"/>
+  <line x1="1100" y1="450" x2="1150" y2="450" stroke="#2e7d32" stroke-width="3"/>
+  <line x1="1100" y1="490" x2="1150" y2="490" stroke="#6a1b9a" stroke-width="3"/>
+  <line x1="1100" y1="530" x2="1150" y2="530" stroke="#ef6c00" stroke-width="3"/>
+  <circle cx="1100" cy="350" r="5" fill="#d32f2f"/>
+  <circle cx="1150" cy="390" r="5" fill="#455a64"/>
+  <circle cx="1100" cy="450" r="5" fill="#2e7d32"/>
+  <circle cx="1100" cy="490" r="5" fill="#6a1b9a"/>
+  <circle cx="1100" cy="530" r="5" fill="#ef6c00"/>
+  <text x="1162" y="356" font-size="15" font-weight="bold" fill="#263238">VCC</text>
+  <text x="1162" y="396" font-size="15" font-weight="bold" fill="#263238">GND</text>
+  <text x="1162" y="456" font-size="15" font-weight="bold" fill="#263238">DIN</text>
+  <text x="1162" y="496" font-size="15" font-weight="bold" fill="#263238">CS</text>
+  <text x="1162" y="536" font-size="15" font-weight="bold" fill="#263238">CLK</text>
+  <text x="1285" y="620" font-size="11.5" fill="#bf8f00" text-anchor="middle">header order varies by vendor —</text>
+  <text x="1285" y="636" font-size="11.5" fill="#bf8f00" text-anchor="middle">follow the labels on your module</text>
+
+  <!-- ══════════════════ WIRES ══════════════════ -->
+  <path d="M 352 420 H 400 V 156" fill="none" stroke="#d32f2f" stroke-width="3.5"/>
+  <path d="M 352 540 H 440 V 700" fill="none" stroke="#455a64" stroke-width="3.5"/>
+  <path d="M 352 460 H 610" fill="none" stroke="#1565c0" stroke-width="3.5"/>
+
+  <path d="M 610 420 H 600 V 156" fill="none" stroke="#d32f2f" stroke-width="3.5"/>
+  <path d="M 610 540 H 580 V 700" fill="none" stroke="#455a64" stroke-width="3.5"/>
+
+  <path d="M 352 500 H 470" fill="none" stroke="#00838f" stroke-width="3.5"/>
+  <rect x="470" y="488" width="56" height="24" rx="3" fill="#ffffff" stroke="#00838f" stroke-width="3"/>
+  <text x="498" y="478" font-size="13" font-weight="bold" fill="#00838f" text-anchor="middle">R1</text>
+  <text x="498" y="532" font-size="12" fill="#00838f" text-anchor="middle">1 kΩ</text>
+  <path d="M 526 500 H 610" fill="none" stroke="#00838f" stroke-width="3.5"/>
+  <circle cx="526" cy="500" r="6.5" fill="#00838f"/>
+  <path d="M 526 500 V 590" fill="none" stroke="#00838f" stroke-width="3.5"/>
+  <rect x="514" y="590" width="24" height="56" rx="3" fill="#ffffff" stroke="#00838f" stroke-width="3"/>
+  <text x="550" y="612" font-size="13" font-weight="bold" fill="#00838f">R2</text>
+  <text x="550" y="632" font-size="12" fill="#00838f">2 kΩ</text>
+  <path d="M 526 646 V 700" fill="none" stroke="#455a64" stroke-width="3.5"/>
+
+  <path d="M 1050 450 H 1100" fill="none" stroke="#2e7d32" stroke-width="3.5"/>
+  <path d="M 1050 490 H 1100" fill="none" stroke="#6a1b9a" stroke-width="3.5"/>
+  <path d="M 1050 530 H 1100" fill="none" stroke="#ef6c00" stroke-width="3.5"/>
+
+  <path d="M 1100 350 H 1080 V 156" fill="none" stroke="#d32f2f" stroke-width="3.5"/>
+  <path d="M 1100 390 H 1115 V 700" fill="none" stroke="#455a64" stroke-width="3.5"/>
+
+  <text x="110" y="640" font-size="13" fill="#00838f">divider  R2/(R1+R2) = 2/3</text>
+  <text x="110" y="658" font-size="13" fill="#00838f">5 V × 2/3 = 3.33 V at GPIO21</text>
+
+  <!-- ══════════════════ LEGEND ══════════════════ -->
+  <rect x="70" y="744" width="330" height="122" rx="8" fill="#fafafa" stroke="#cfd8dc" stroke-width="2"/>
+  <text x="86" y="768" font-size="13" font-weight="bold" fill="#37474f">LEGEND</text>
+  <line x1="86" y1="788" x2="126" y2="788" stroke="#d32f2f" stroke-width="4"/><text x="136" y="793" font-size="12" fill="#37474f">5 V</text>
+  <line x1="186" y1="788" x2="226" y2="788" stroke="#455a64" stroke-width="4"/><text x="236" y="793" font-size="12" fill="#37474f">GND</text>
+  <line x1="286" y1="788" x2="326" y2="788" stroke="#1565c0" stroke-width="4"/><text x="336" y="793" font-size="12" fill="#37474f">TRIG</text>
+  <line x1="86" y1="814" x2="126" y2="814" stroke="#00838f" stroke-width="4"/><text x="136" y="819" font-size="12" fill="#37474f">ECHO</text>
+  <line x1="186" y1="814" x2="226" y2="814" stroke="#2e7d32" stroke-width="4"/><text x="236" y="819" font-size="12" fill="#37474f">DIN</text>
+  <line x1="286" y1="814" x2="326" y2="814" stroke="#6a1b9a" stroke-width="4"/><text x="336" y="819" font-size="12" fill="#37474f">CS</text>
+  <line x1="86" y1="836" x2="126" y2="836" stroke="#ef6c00" stroke-width="4"/><text x="136" y="841" font-size="12" fill="#37474f">CLK</text>
+
+  <!-- ══════════════════ NOTES ══════════════════ -->
+  <rect x="440" y="744" width="1010" height="122" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="2"/>
+  <text x="458" y="768" font-size="13" font-weight="bold" fill="#e65100">BEFORE YOU POWER UP</text>
+  <text x="458" y="790" font-size="12" fill="#5d4037">1  ECHO is 5 V logic — R1 and R2 must be fitted. Straight into GPIO21 it damages the pin, often not immediately.</text>
+  <text x="458" y="808" font-size="12" fill="#5d4037">2  Never put 5 V on an ESP32-C6 GPIO. Absolute maximum is about 3.6 V.</text>
+  <text x="458" y="826" font-size="12" fill="#5d4037">3  Keep clear of GPIO4, 5, 8, 9, 15 (strapping) · GPIO8 (RGB LED) · GPIO12, 13 (USB) · GPIO16, 17 (serial console).</text>
+  <text x="458" y="846" font-size="12" fill="#5d4037">4  The display is optional. An i2C display (SDA/SCL) needs a different driver — see wiring.md §13.</text>
+</svg>

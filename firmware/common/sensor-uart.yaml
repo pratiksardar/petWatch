@@ -1,0 +1,30 @@
+# UART ultrasonic sensor: JSN-SR04T and AJ-SR04M.
+#
+# These modules do NOT present a trig/echo interface. They report distance on a
+# serial line at 9600 baud, so they need this package instead of sensor-pulse.
+# The ESPHome component enforces baud_rate 9600 with both TX and RX present, so
+# wire both data lines even though mode 1 only listens.
+#
+# Requires substitutions: pin_uart_tx, pin_uart_rx
+
+uart:
+  id: jsn_uart
+  baud_rate: 9600
+  # TX is the ESP -> sensor RX line, used to send the 0x55 poll in mode 2.
+  tx_pin: ${pin_uart_tx}
+  # RX is the sensor TX -> ESP line, which carries the readings.
+  rx_pin: ${pin_uart_rx}
+
+sensor:
+  - platform: jsn_sr04t
+    id: box_distance
+    name: "${friendly_name} distance"
+    model: jsn_sr04t
+    uart_id: jsn_uart
+    # Mode 2 only: how often to send the 0x55 poll. Ignored in mode 1, where the
+    # module free-runs about every 100 ms and this value does nothing.
+    update_interval: 250ms
+    unit_of_measurement: mm
+    accuracy_decimals: 0
+    filters:
+      - multiply: 1000.0          # component reports metres

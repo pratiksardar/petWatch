@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pet Watch — Live</title>
+<style>
+  :root {
+    --bg: #0b0f0e;
+    --panel: #121816;
+    --panel-edge: #1f2a26;
+    --ink: #d9e5e0;
+    --ink-dim: #7d8f88;
+    --accent: #35e0a1;
+    --accent-dim: rgba(53, 224, 161, .12);
+    --amber: #ffb454;
+    --red: #ff6b6b;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.45 -apple-system, "SF Pro Text", system-ui, sans-serif;
+  }
+  header {
+    display: flex; align-items: baseline; gap: 14px;
+    padding: 18px 22px 10px;
+  }
+  header h1 { font-size: 17px; margin: 0; letter-spacing: .02em; }
+  header .sub { color: var(--ink-dim); font-size: 12.5px; font-family: var(--mono); }
+  #conn {
+    margin-left: auto; font-family: var(--mono); font-size: 12px;
+    padding: 3px 10px; border-radius: 99px; border: 1px solid var(--panel-edge);
+  }
+  #conn.ok { color: var(--accent); border-color: rgba(53,224,161,.4); }
+  #conn.bad { color: var(--red); border-color: rgba(255,107,107,.4); }
+  main {
+    display: grid; gap: 14px; padding: 0 22px 28px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: "gauge counts" "chart chart" "config config" "feed feed";
+  }
+  @media (max-width: 900px) {
+    main { grid-template-areas: "gauge gauge" "counts counts" "chart chart" "config config" "feed feed"; }
+  }
+  section {
+    background: var(--panel); border: 1px solid var(--panel-edge);
+    border-radius: 14px; padding: 16px 18px;
+  }
+  section h2 {
+    margin: 0 0 12px; font-size: 11px; font-weight: 600;
+    letter-spacing: .12em; text-transform: uppercase; color: var(--ink-dim);
+  }
+  #gauge { grid-area: gauge; }
+  #counts { grid-area: counts; }
+  #chart { grid-area: chart; }
+  #config { grid-area: config; }
+  #feed { grid-area: feed; }
+
+  .big { font-family: var(--mono); font-size: 54px; font-weight: 600; line-height: 1; }
+  .big small { font-size: 20px; color: var(--ink-dim); font-weight: 400; }
+  #zone {
+    display: inline-block; margin-top: 12px; font-family: var(--mono); font-size: 12.5px;
+    padding: 4px 12px; border-radius: 99px;
+    background: var(--accent-dim); color: var(--accent);
+  }
+  #zone.hot { background: rgba(255,180,84,.15); color: var(--amber); }
+  #baseline { margin-top: 10px; color: var(--ink-dim); font-family: var(--mono); font-size: 12px; }
+  canvas { width: 100%; height: 170px; display: block; }
+
+  /* counts */
+  .count-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  @media (max-width: 700px) { .count-grid { grid-template-columns: repeat(2, 1fr); } }
+  .cstat {
+    background: var(--bg); border: 1px solid var(--panel-edge); border-radius: 12px;
+    padding: 12px 14px; display: flex; flex-direction: column; gap: 2px;
+  }
+  .cstat b { font-family: var(--mono); font-size: 30px; font-weight: 600; color: var(--accent); }
+  .cstat.amber b { color: var(--amber); }
+  .cstat span { font-size: 12px; color: var(--ink-dim); }
+  .pill-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .pill {
+    font-family: var(--mono); font-size: 11.5px; padding: 3px 10px; border-radius: 99px;
+    border: 1px solid var(--panel-edge); color: var(--ink-dim);
+  }
+  .pill.on { color: var(--amber); border-color: rgba(255,180,84,.45); }
+
+  /* config */
+  .config-grid { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 18px; align-items: end; }
+  @media (max-width: 900px) { .config-grid { grid-template-columns: 1fr; } }
+  .rule label { display: block; font-size: 12.5px; color: var(--ink-dim); margin-bottom: 6px; }
+  .rule input[type=range] { width: 100%; accent-color: var(--accent); }
+  .rule output { font-family: var(--mono); font-size: 13px; }
+  .hint { color: var(--ink-dim); font-size: 12px; margin-top: 10px; }
+  .btn {
+    font: 600 12.5px var(--mono); padding: 8px 16px; border-radius: 10px; cursor: pointer;
+    border: 1px solid var(--panel-edge); background: var(--bg); color: var(--ink-dim);
+  }
+  .btn:hover { color: var(--ink); border-color: var(--ink-dim); }
+  .btn.danger:hover { color: var(--red); border-color: rgba(255,107,107,.5); }
+  #toggle-logs::after { content: "⌃"; margin-left: 6px; }
+  #feed.hidden #toggle-logs::after { content: "⌄"; }
+  #feed.hidden ul { display: none; }
+
+  /* feed */
+  #feed ul { list-style: none; margin: 0; padding: 0; font-family: var(--mono); font-size: 12.5px; }
+  #feed li { padding: 5px 0; border-bottom: 1px solid var(--panel-edge); display: flex; gap: 12px; }
+  #feed li time { color: var(--ink-dim); flex: none; }
+  #feed li .k { flex: none; width: 118px; color: var(--accent); }
+  #feed li .k.visit { color: var(--amber); }
+  #feed li .k.config { color: #7ab8ff; }
+  #feed li .k.reset { color: var(--red); }
+  #feed-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  #feed-head h2 { margin: 0; }
+</style>
+</head>
+<body>
+<header>
+  <h1>🐾 Pet Watch</h1>
+  <span class="sub" id="rule-line">…</span>
+  <span id="conn" class="bad">connecting</span>
+</header>
+
+<main>
+  <section id="gauge">
+    <h2>Distance</h2>
+    <div class="big"><span id="mm">—</span><small> mm</small></div>
+    <div><span id="zone">out of zone</span></div>
+    <div id="baseline">baseline — · sensor 172.20.0.183</div>
+    <canvas id="spark" width="800" height="340"></canvas>
+  </section>
+
+  <section id="counts">
+    <h2>Counts</h2>
+    <div class="count-grid">
+      <div class="cstat"><b id="c-today">0</b><span>interactions today</span></div>
+      <div class="cstat"><b id="c-all">0</b><span>interactions all time</span></div>
+      <div class="cstat amber"><b id="c-visits">0</b><span>box visits</span></div>
+      <div class="cstat"><b id="c-last">—</b><span>last interaction</span></div>
+    </div>
+    <div class="pill-row">
+      <span class="pill" id="p-inzone">in zone</span>
+      <span class="pill" id="p-visit">visit open</span>
+    </div>
+  </section>
+
+  <section id="chart">
+    <h2>Last 2 minutes</h2>
+    <canvas id="chart-c" width="1200" height="360"></canvas>
+  </section>
+
+  <section id="config">
+    <h2>Configuration — applies live</h2>
+    <div class="config-grid">
+      <div class="rule">
+        <label for="r-mm">Distance gate (count under)</label>
+        <input id="r-mm" type="range" min="30" max="200" step="5" value="100">
+        <output id="o-mm">100 mm</output>
+      </div>
+      <div class="rule">
+        <label for="r-s">Duration gate (sustain for)</label>
+        <input id="r-s" type="range" min="0.5" max="15" step="0.5" value="3">
+        <output id="o-s">3.0 s</output>
+      </div>
+      <div class="rule">
+        <label for="r-gap">Merge window (re-touch within)</label>
+        <input id="r-gap" type="range" min="1" max="15" step="0.5" value="3">
+        <output id="o-gap">3.0 s</output>
+      </div>
+      <button class="btn danger" id="reset">Reset counters</button>
+    </div>
+    <div class="hint">One count = within the distance gate, sustained for the duration gate. Re-touches inside the merge window fold into the same count. Reset clears the dashboard only — the JSONL file keeps every record.</div>
+  </section>
+
+  <section id="feed">
+    <div id="feed-head">
+      <h2>Event log</h2>
+      <button class="btn" id="toggle-logs">hide</button>
+    </div>
+    <ul id="feed-list"></ul>
+  </section>
+</main>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  const fmtClock = (t) => new Date(t).toLocaleTimeString([], { hour12: false });
+
+  // ---- connection state -------------------------------------------------
+  let deviceConnected = false;
+  function setConn() {
+    const el = $("conn");
+    if (!browserLive) { el.className = "bad"; el.textContent = "browser offline"; }
+    else if (!deviceConnected) { el.className = "bad"; el.textContent = "device offline"; }
+    else { el.className = "ok"; el.textContent = "live"; }
+  }
+
+  // ---- chart ------------------------------------------------------------
+  const WINDOW_MS = 120_000;
+  const pts = [];                 // {t, mm}
+
+  function pushPoint(t, mm) {
+    pts.push({ t, mm });
+    while (pts.length > 0 && pts[0].t < t - WINDOW_MS) pts.shift();
+  }
+
+  function drawChart() {
+    const c = $("chart-c"), g = c.getContext("2d");
+    const W = c.width, H = c.height;
+    g.clearRect(0, 0, W, H);
+    g.font = "20px ui-monospace, monospace";
+    const now = pts.length ? pts[pts.length - 1].t : Date.now();
+    const t0 = now - WINDOW_MS;
+    const inWindow = pts.filter((p) => p.t >= t0);
+    const finite = inWindow.filter((p) => Number.isFinite(p.mm));
+    const zoneMm = +$("r-mm").value;
+    const hi = Math.max(1300, ...finite.map((p) => p.mm));
+    const lo = 0;
+    const y = (mm) => H - ((mm - lo) / (hi - lo)) * H;
+
+    // zone band
+    g.fillStyle = "rgba(53,224,161,.10)";
+    g.fillRect(0, y(zoneMm), W, H - y(zoneMm));
+    g.strokeStyle = "rgba(53,224,161,.5)";
+    g.setLineDash([6, 6]);
+    g.beginPath(); g.moveTo(0, y(zoneMm)); g.lineTo(W, y(zoneMm)); g.stroke();
+    g.setLineDash([]);
+    g.fillStyle = "rgba(53,224,161,.8)";
+    g.fillText(`zone ≤ ${zoneMm} mm`, 10, y(zoneMm) - 8);
+
+    // trace
+    g.strokeStyle = "#35e0a1"; g.lineWidth = 2; g.beginPath();
+    let pen = false;
+    for (const p of inWindow) {
+      const x = ((p.t - t0) / WINDOW_MS) * W;
+      if (!Number.isFinite(p.mm)) { pen = false; continue; }
+      if (!pen) { g.moveTo(x, y(p.mm)); pen = true; } else g.lineTo(x, y(p.mm));
+    }
+    g.stroke();
+
+    // time ticks
+    g.fillStyle = "#7d8f88";
+    for (let s = 0; s <= 120; s += 30) {
+      const x = (s / 120) * W;
+      g.fillText(s === 0 ? "-2m" : s === 60 ? "-1m" : s === 120 ? "now" : `-${120 - s}s`, Math.min(x + 4, W - 60), H - 6);
+    }
+  }
+  setInterval(drawChart, 500);
+
+  // ---- feed -------------------------------------------------------------
+  function addFeed(kind, text, at) {
+    const li = document.createElement("li");
+    const t = document.createElement("time"); t.textContent = fmtClock(at ?? Date.now());
+    const k = document.createElement("span"); k.className = "k " + kind; k.textContent = kind;
+    const d = document.createElement("span"); d.textContent = text;
+    li.append(t, k, d);
+    const list = $("feed-list");
+    list.prepend(li);
+    while (list.children.length > 60) list.lastChild.remove();
+  }
+
+  // ---- log hide/show (persisted) ----------------------------------------
+  const feedSection = $("feed");
+  if (localStorage.getItem("pw-logs-hidden") === "1") feedSection.classList.add("hidden");
+  $("toggle-logs").addEventListener("click", () => {
+    const hidden = feedSection.classList.toggle("hidden");
+    $("toggle-logs").textContent = hidden ? "show" : "hide";
+    localStorage.setItem("pw-logs-hidden", hidden ? "1" : "0");
+  });
+  $("toggle-logs").textContent = feedSection.classList.contains("hidden") ? "show" : "hide";
+
+  // ---- rules UI ----------------------------------------------------------
+  function ruleLine() {
+    $("rule-line").textContent =
+      `rule: within ${$("r-mm").value} mm for ${(+$("r-s").value).toFixed(1)} s (merge ${(+$("r-gap").value).toFixed(1)} s) → counts`;
+  }
+  $("r-mm").addEventListener("input", () => { $("o-mm").textContent = `${$("r-mm").value} mm`; ruleLine(); });
+  $("r-s").addEventListener("input", () => { $("o-s").textContent = `${(+$("r-s").value).toFixed(1)} s`; ruleLine(); });
+  $("r-gap").addEventListener("input", () => { $("o-gap").textContent = `${(+$("r-gap").value).toFixed(1)} s`; ruleLine(); });
+
+  let ruleTimer = null;
+  function pushRule() {
+    clearTimeout(ruleTimer);
+    ruleTimer = setTimeout(() => {
+      fetch("/api/config", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          interactionMm: +$("r-mm").value,
+          minDurationMs: Math.round(+$("r-s").value * 1000),
+          mergeGapMs: Math.round(+$("r-gap").value * 1000),
+        }),
+      }).catch(() => {});
+    }, 350);
+  }
+  for (const id of ["r-mm", "r-s", "r-gap"]) $(id).addEventListener("change", pushRule);
+
+  $("reset").addEventListener("click", () => {
+    fetch("/api/reset", { method: "POST" }).catch(() => {});
+  });
+
+  // ---- SSE --------------------------------------------------------------
+  let browserLive = false;
+  const es = new EventSource("/api/events");
+  es.addEventListener("open", () => { browserLive = true; setConn(); });
+  es.addEventListener("error", () => { browserLive = false; setConn(); });
+  es.addEventListener("hello", (e) => {
+    const s = JSON.parse(e.data);
+    $("r-mm").value = s.config.interactionMm; $("o-mm").textContent = `${s.config.interactionMm} mm`;
+    $("r-s").value = s.config.minDurationMs / 1000; $("o-s").textContent = `${(s.config.minDurationMs / 1000).toFixed(1)} s`;
+    $("r-gap").value = s.config.mergeGapMs / 1000; $("o-gap").textContent = `${(s.config.mergeGapMs / 1000).toFixed(1)} s`;
+    $("c-today").textContent = s.interactionsToday ?? 0;
+    $("c-all").textContent = s.totalInteractions;
+    $("c-visits").textContent = s.totalVisits;
+    $("c-last").textContent = s.lastInteractionAt ? fmtClock(s.lastInteractionAt) : "—";
+    deviceConnected = s.deviceConnected;
+    ruleLine(); setConn();
+  });
+  es.addEventListener("sample", (e) => {
+    const s = JSON.parse(e.data);
+    pushPoint(s.t, s.mm);
+    $("mm").textContent = Number.isFinite(s.mm) ? Math.round(s.mm) : "—";
+    if (s.baselineMm !== null) $("baseline").textContent = `baseline ${Math.round(s.baselineMm)} mm · sensor 172.20.0.183`;
+    const inZone = s.interaction;
+    const z = $("zone");
+    z.textContent = inZone ? "in interaction zone — timing…" : "out of zone";
+    z.className = inZone ? "hot" : "";
+    $("p-inzone").className = "pill" + (inZone ? " on" : "");
+    drawChart();
+  });
+  es.addEventListener("interaction", (e) => {
+    const i = JSON.parse(e.data);
+    $("c-today").textContent = Number($("c-today").textContent) + 1;
+    $("c-all").textContent = Number($("c-all").textContent) + 1;
+    $("c-last").textContent = fmtClock(i.recordedAt);
+    addFeed("interaction", `object interaction — closest ${Math.round(i.minMm)} mm, ${(i.durationMs / 1000).toFixed(1)} s`, i.recordedAt);
+  });
+  es.addEventListener("visit", (e) => {
+    const v = JSON.parse(e.data);
+    $("c-visits").textContent = Number($("c-visits").textContent) + 1;
+    addFeed("visit", `box visit — ${(v.durationMs / 1000).toFixed(1)} s, closest ${Math.round(v.minMm)} mm`, v.endedAt);
+  });
+  es.addEventListener("config", (e) => {
+    const c = JSON.parse(e.data);
+    $("r-mm").value = c.interactionMm; $("o-mm").textContent = `${c.interactionMm} mm`;
+    $("r-s").value = c.minDurationMs / 1000; $("o-s").textContent = `${(c.minDurationMs / 1000).toFixed(1)} s`;
+    $("r-gap").value = c.mergeGapMs / 1000; $("o-gap").textContent = `${(c.mergeGapMs / 1000).toFixed(1)} s`;
+    ruleLine();
+    addFeed("config", `rule set to within ${c.interactionMm} mm for ${(c.minDurationMs / 1000).toFixed(1)} s`);
+  });
+  es.addEventListener("reset", () => {
+    $("c-today").textContent = 0;
+    $("c-all").textContent = 0;
+    $("c-visits").textContent = 0;
+    $("c-last").textContent = "—";
+    addFeed("reset", "counters reset (persisted data untouched)");
+  });
+  es.addEventListener("device", (e) => {
+    deviceConnected = JSON.parse(e.data).connected;
+    setConn();
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+# Optional: MAX7219 dot matrix display.
+#
+# Add `display: !include common/display-max7219.yaml` to the packages: block of
+# an entry point. Remove it and the device still works — every sensor entity,
+# the occupancy logic, and the debounce are in common/base.yaml and do not
+# depend on anything here.
+#
+# Requires substitutions: pin_spi_clk, pin_spi_mosi, pin_spi_cs
+#
+# ─────────────────────────────────────────────────────────────────────────────
+# This drives a MAX7219 over SPI. It will NOT work with an I2C LED matrix
+# (VCC / GND / SDA / SCL), because ESPHome has no HT16K33 component — verified:
+# esphome/components/ht16k33 does not exist upstream. See docs/wiring.md §13.
+# ─────────────────────────────────────────────────────────────────────────────
+
+spi:
+  clk_pin: ${pin_spi_clk}
+  mosi_pin: ${pin_spi_mosi}
+
+display:
+  - platform: max7219digit
+    id: matrix
+    cs_pin: ${pin_spi_cs}
+    # 1 for a single 8x8 module, 4 for a 32x8 bar. The lambda below is written
+    # for 32x8; at num_chips: 1 only the leftmost 8 columns are visible.
+    num_chips: 4
+    intensity: 6
+    update_interval: 100ms
+    lambda: |-
+      // Graphics only — no font file, so nothing to break on a fresh flash.
+      float occ = id(occupancy).state;
+      // std:: form, not the global C macro — see the note in common/base.yaml.
+      if (!std::isfinite(occ)) occ = 0.0f;
+
+      const bool present = occ > id(occ_threshold).state;
+
+      // Bottom row: activity bar, one pixel per 3.125%.
+      int bar = (int) (occ / 100.0f * 32.0f);
+      if (bar > 32) bar = 32;
+      if (bar > 0) it.filled_rectangle(0, 7, bar, 1);
+
+      // Eyes open wide when occupied, narrow when idle. On 8 px of vertical
+      // space this reads as "alert" vs "asleep" more clearly than any glyph.
+      const int eye_w = present ? 4 : 3;
+      const int eye_h = present ? 5 : 2;
+      const int top   = 1;
+
+      it.filled_rectangle(5, top, eye_w, eye_h);
+      it.filled_rectangle(23, top, eye_w, eye_h);

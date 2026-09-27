@@ -1,0 +1,50 @@
+# Pet Watch — trigger/echo ultrasonic variant.
+#
+#   esphome run firmware/pet-watch.yaml
+#
+# For HC-SR04, RCWL-1601, US-100, or any module with the classic 4-pin
+# trig/echo interface. For a JSN-SR04T or AJ-SR04M, use pet-watch-uart.yaml
+# instead — those report over serial, not trig/echo.
+#
+# See docs/wiring.md for diagrams, level shifting, and the pre-power checklist.
+
+substitutions:
+  device_name: pet-watch
+  friendly_name: Pet Watch
+
+  # --- Sensor pins ---
+  # GPIO4, GPIO5, GPIO8, GPIO9 and GPIO15 are strapping pins on the ESP32-C6:
+  # their level at reset selects boot and JTAG behaviour, so a sensor holding
+  # one is a genuine hazard rather than an inconvenience. GPIO8 also drives the
+  # on-board addressable RGB LED, GPIO9 is the BOOT button, GPIO12/13 are USB
+  # D-/D+, and GPIO16/17 are the serial console used for logging.
+  #
+  # Header positions: GPIO20 = J3 pin 8, GPIO21 = J3 pin 7.
+  pin_trig: GPIO20
+  pin_echo: GPIO21
+
+  # --- Display pins (only used if you opt into the display package) ---
+  # GPIO6 and GPIO7 are the ESP32-C6's hardware FSPICLK/FSPID pins, the
+  # cleanest routing for SPI. GPIO16 would be the hardware FSPICS0, but it is
+  # U0TXD and using it would kill serial logging, so CS is a plain GPIO driven
+  # in software.
+  # Header positions: GPIO6 = J1 pin 5, GPIO7 = J1 pin 6, GPIO10 = J1 pin 10.
+  pin_spi_clk: GPIO6
+  pin_spi_mosi: GPIO7
+  pin_spi_cs: GPIO10
+
+  # --- Calibration, in millimetres ---
+  # Tune against the logs: measure the empty box first, then with the pet in
+  # place. See docs/wiring.md, "First boot".
+  dist_empty_mm: "1150"
+  dist_full_mm: "550"
+
+packages:
+  base: !include common/base.yaml
+  sensor: !include common/sensor-pulse.yaml
+  # The display is optional and purely cosmetic. Uncomment to add it — or leave
+  # it out and the device still reports distance, occupancy and presence.
+  #
+  # This package drives a MAX7219 over SPI. It will not work with an I2C LED
+  # matrix (VCC / GND / SDA / SCL): ESPHome has no HT16K33 component.
+  # display: !include common/display-max7219.yaml

@@ -1,0 +1,16 @@
+node_modules/
+*.tsbuildinfo
+.DS_Store
+
+# Project-local ESPHome toolchain (created by `uv venv`)
+.venv/
+
+# ESPHome build output and per-device secrets
+firmware/.esphome/
+firmware/secrets.yaml
+
+# Real captured traces may contain household timing patterns — opt in per file.
+traces/*.local.json
+
+# Live interaction counts captured by the dashboard server
+data/

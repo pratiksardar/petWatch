@@ -1,0 +1,29 @@
+{
+  "name": "pet-watch",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Non-contact litter box & bowl health journal: ESP32-C6 firmware + host-side visit detector.",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "test": "node --test 'test/**/*.test.ts'",
+    "test:watch": "node --test --watch 'test/**/*.test.ts'",
+    "typecheck": "tsc --noEmit",
+    "verify": "npm run typecheck && npm test",
+    "dashboard": "node src/server.ts",
+    "firmware:logs": "cd firmware && ../.venv/bin/esphome logs pet-watch.yaml --device pet-watch.local",
+    "firmware:run": "cd firmware && ../.venv/bin/esphome run pet-watch.yaml --device pet-watch.local",
+    "web": "open http://localhost:8788"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pratiksardar/pet-watch"
+  }
+}

@@ -1,0 +1,42 @@
+# Pet Watch — UART ultrasonic variant.
+#
+#   esphome run firmware/pet-watch-uart.yaml
+#
+# For the JSN-SR04T and AJ-SR04M. These report distance over a serial line at
+# 9600 baud, not over trig/echo, so they need this entry point rather than
+# pet-watch.yaml.
+#
+# Both data lines must be wired. The ESPHome component validates the bus with
+# require_tx and require_rx, so it will refuse to build with only one connected.
+#
+# See docs/wiring.md for diagrams, the mode-select pads, and the divider the TX
+# line needs.
+
+substitutions:
+  device_name: pet-watch
+  friendly_name: Pet Watch
+
+  # --- Sensor pins ---
+  # Avoids the same reserved set as the pulse variant: strapping pins GPIO4,
+  # GPIO5, GPIO8, GPIO9, GPIO15; the RGB LED on GPIO8; BOOT on GPIO9; USB on
+  # GPIO12/13; the serial console on GPIO16/17.
+  #
+  # Header positions: GPIO20 = J3 pin 8, GPIO21 = J3 pin 7.
+  pin_uart_tx: GPIO20   # ESP -> sensor RX: sends the 0x55 poll in mode 2
+  pin_uart_rx: GPIO21   # sensor TX -> ESP: carries the readings
+
+  # --- Display pins (only used if you opt into the display package) ---
+  # Header positions: GPIO6 = J1 pin 5, GPIO7 = J1 pin 6, GPIO10 = J1 pin 10.
+  pin_spi_clk: GPIO6
+  pin_spi_mosi: GPIO7
+  pin_spi_cs: GPIO10
+
+  # --- Calibration, in millimetres ---
+  dist_empty_mm: "1150"
+  dist_full_mm: "550"
+
+packages:
+  base: !include common/base.yaml
+  sensor: !include common/sensor-uart.yaml
+  # The display is optional and purely cosmetic — see pet-watch.yaml for notes.
+  # display: !include common/display-max7219.yaml

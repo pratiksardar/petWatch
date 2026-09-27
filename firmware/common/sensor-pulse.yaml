@@ -1,0 +1,19 @@
+# Trigger/echo ultrasonic sensor: HC-SR04, RCWL-1601, US-100, and any other
+# module presenting the classic 4-pin trig/echo interface.
+#
+# Requires substitutions: pin_trig, pin_echo
+
+sensor:
+  # Raw distance. Deliberately unfiltered: the host detector wants the raw
+  # series, and smoothing here would hide the noise it needs to see.
+  - platform: ultrasonic
+    id: box_distance
+    name: "${friendly_name} distance"
+    trigger_pin: ${pin_trig}
+    echo_pin: ${pin_echo}
+    update_interval: 50ms
+    timeout: 2.5m
+    unit_of_measurement: mm
+    accuracy_decimals: 0
+    filters:
+      - multiply: 1000.0          # component reports metres
