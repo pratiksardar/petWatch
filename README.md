@@ -37,7 +37,7 @@ no cloud. Every visit becomes a row in SQLite, and over days those rows become
 ## Quick start
 
 ```bash
-git clone https://github.com/pratiksardar/pet-watch && cd pet-watch
+git clone https://github.com/pratiksardar/petWatch && cd petWatch
 npm install
 npm run verify        # typecheck + 38 tests, no hardware needed
 npm run dashboard     # live dashboard on http://localhost:8788
