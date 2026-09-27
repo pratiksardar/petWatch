@@ -1,0 +1,33 @@
+{
+  "name": "claude-kudos-demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Pet Watch hackathon demo video (Remotion)",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "render": "remotion render src/index.ts PetWatchDemo out/pet-watch-demo.mp4 --codec h264 --crf 18",
+    "typecheck": "tsc --noEmit",
+    "finalize": "ffmpeg -y -v error -i out/pet-watch-demo.mp4 -c:v copy -af loudnorm=I=-16:TP=-1.5:LRA=11 -c:a aac -b:a 192k out/pet-watch-demo-final.mp4",
+    "build": "npm run render && npm run finalize"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.529",
+    "@remotion/google-fonts": "^4.0.529",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "remotion": "^4.0.529"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^7.0.2"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pratiksardar/pet-watch"
+  }
+}
