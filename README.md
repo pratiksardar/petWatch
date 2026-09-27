@@ -22,6 +22,13 @@ food bowl, learns that individual's normal rhythm, and flags when it drifts.
 
 ---
 
+## Contents
+
+[Demo](#the-demo-in-one-breath) · [Raw footage](#raw-footage) · [Installation](#installation) ·
+[Usage](#usage) · [Design notes](#design-notes) · [Hardware](#hardware) · [Firmware](#firmware) ·
+[Detector](#detector) · [Support](#support) · [Roadmap](#roadmap) · [Contributing](#contributing) ·
+[Authors](#authors-and-acknowledgment) · [License](#license) · [Project status](#project-status)
+
 ## The demo in one breath
 
 A golden retriever drinks from a bowl. An ultrasonic sensor above it sees the echo
@@ -50,18 +57,63 @@ count against the frame.
 All four are also cut into the [demo video](media/pet-watch-demo.mp4): visits 1–3 at
 0:10–0:30 and the bench test at 0:38–0:59.
 
-## Quick start
+## Installation
+
+**Requirements**
+
+- **Node.js 24+.** TypeScript runs natively, with no build step and zero runtime dependencies.
+- *Optional, for the real device:* an ESP32-C6 dev board, an ultrasonic sensor
+  (RCWL-1601 for the bench, JSN-SR04T for deployment), and [ESPHome](https://esphome.io).
+  See [Hardware](#hardware).
 
 ```bash
 git clone https://github.com/pratiksardar/petWatch && cd petWatch
 npm install
-npm run verify        # typecheck + 38 tests, no hardware needed
-npm run dashboard     # live dashboard on http://localhost:8788
+npm run verify        # typecheck + 38 tests; no hardware needed
 ```
 
-Point the dashboard at your device with `PET_WATCH_DEVICE=http://pet-watch.local npm run dashboard`.
-Tune detection with `PET_WATCH_INTERACTION_MM` and `PET_WATCH_MIN_S`. Flashing the
-device is covered under [Firmware](#firmware); wiring lives in [`docs/wiring.md`](docs/wiring.md).
+To flash the device, follow [Firmware](#firmware); for wiring, see [`docs/wiring.md`](docs/wiring.md).
+
+## Usage
+
+### Live dashboard
+
+```bash
+PET_WATCH_DEVICE=http://pet-watch.local npm run dashboard   # → http://localhost:8788
+```
+
+| Variable | Default | What it does |
+| --- | --- | --- |
+| `PET_WATCH_DEVICE` | `http://172.20.0.183` | Base URL of the ESPHome device to stream from. |
+| `PORT` | `8788` | Dashboard port. |
+| `PET_WATCH_INTERACTION_MM` | `100` | Distance that counts as "in the interaction zone". |
+| `PET_WATCH_MIN_S` | `3` | Minimum dwell, in seconds, before it counts as a visit. |
+| `PET_WATCH_NO_OPEN` | *(unset)* | Set it to stop macOS from opening the browser automatically. |
+
+Interactions are appended to `data/interactions.jsonl` (gitignored) and exported at `/api/interactions.csv`.
+
+### As a library
+
+The detector is pure: samples go in, visits come out, with no clock, network or hardware.
+
+```ts
+import { detectVisits, synthTrace } from "./src/index.ts";
+
+// 10 minutes of 20 Hz readings with one 45 s visit and a 0.5 s tail swish.
+const samples = synthTrace({
+  durationMs: 10 * 60_000,
+  emptyMm: 1100,
+  visits: [{ atMs: 120_000, durationMs: 45_000, depthMm: 520 }],
+  blips: [{ atMs: 400_000, durationMs: 500 }],
+});
+
+for (const v of detectVisits(samples)) {
+  console.log(`${v.durationMs / 1000} s visit, closest ${Math.round(v.minMm)} mm`);
+}
+// → 45 s visit, closest 564 mm   (the tail swish is filtered out)
+```
+
+For live use, `new VisitDetector()` exposes the same logic one sample at a time via `push()` and `flush()`.
 
 ## Repository map
 
@@ -358,19 +410,6 @@ on demand — including the ones that only show up over a long run, like a
 five-minute visit, 40 mm/min of thermal drift, and a subject hovering exactly on
 the detection threshold.
 
-## Milestones
-
-| # | Deliverable | Done when |
-| --- | --- | --- |
-| 1 | Breadboard bring-up | Distance streams, matrix shows the bar responding. |
-| 2 | Mounted + calibrated | `occupied` toggles correctly as the pet comes and goes. |
-| 3 | Trace capture | ≥ 20 real labelled visits in `traces/`. |
-| 4 | Detector + golden tests | Replaying traces reproduces the labelled visit list. |
-| 5 | Host ingest + rollups | Daily counts and durations queryable. |
-| 6 | L2 anomaly alerts | A injected-double-frequency synthetic week raises exactly one alert. |
-| 7 | Multi-pet | Collar beacon attributes visits; ambiguous visits fall back to `pet_id = null`. |
-| 8 | Deployed | Living on the box for 2 weeks with no false-alert storm. |
-
 ## Caveats
 
 - **5 V sensor lines need a divider.** Feed an HC-SR04's echo — or a
@@ -396,21 +435,55 @@ the detection threshold.
   lambda fails to compile, that's the line to check, and falling back to
   `it.print()` with a font fixes it.
 
-## Team
+## Support
+
+- **Bugs and questions:** [open an issue](https://github.com/pratiksardar/petWatch/issues).
+- **Hardware trouble:** check the troubleshooting table in [`docs/wiring.md`](docs/wiring.md) first.
+  Most "firmware bugs" turn out to be brownouts or an undivided 5 V echo line (see [Caveats](#caveats)).
+
+## Roadmap
+
+| # | Milestone | Done when | Status |
+| --- | --- | --- | --- |
+| 1 | Breadboard bring-up | Distance streams, and the dashboard responds live. | ✅ Done; see the [demo](media/pet-watch-demo.mp4) |
+| 2 | Mounted + calibrated | `occupied` toggles correctly as the pet comes and goes. | 🟡 Proven at a water bowl, not yet permanently mounted |
+| 3 | Trace capture | ≥ 20 real labelled visits in `traces/`. | ⬜ Next |
+| 4 | Detector + golden tests | Replaying traces reproduces the labelled visit list. | 🟡 Detector tested on synthetic traces; real-trace golden files pending |
+| 5 | Host ingest + rollups | Daily counts and durations queryable. | 🟡 `src/rollup.ts` written, tests pending |
+| 6 | L2 anomaly alerts | An injected double-frequency synthetic week raises exactly one alert. | 🟡 `src/anomaly.ts` written, tests pending |
+| 7 | Multi-pet | A collar beacon attributes visits; ambiguous visits fall back to `pet_id = null`. | ⬜ Planned |
+| 8 | Deployed | Living on the box for 2 weeks with no false-alert storm. | ⬜ Planned |
+
+## Contributing
+
+Issues and pull requests are welcome, especially real captured traces (see
+[Testing without a pet](#testing-without-a-pet)), new sensor variants, and
+multi-pet attribution. Read [CONTRIBUTING.md](CONTRIBUTING.md) for the ground rules; in short:
+
+```bash
+npm install && npm run verify   # must pass before a PR
+```
+
+## Authors and acknowledgment
 
 <p align="center">
   <img src="media/team.jpg" alt="A Pet Watch teammate at the table with our golden retriever beta tester" width="360"><br>
   <sub>The humans who built it, and the Chief Testing Officer who signed off on every visit.</sub>
 </p>
 
-## Contributing
-
-Issues and pull requests are welcome, especially real captured traces (see
-[Testing without a pet](#testing-without-a-pet)), new sensor variants, and
-multi-pet attribution. Start with [CONTRIBUTING.md](CONTRIBUTING.md).
+- **The Pet Watch team:** hardware, firmware, detector and dashboard.
+- **Our golden retriever:** field testing, three visits, zero complaints.
+- Built with [Claude Code](https://claude.com/claude-code). Firmware runs on [ESPHome](https://esphome.io);
+  the demo video is rendered with [Remotion](https://remotion.dev).
 
 ## License
 
 [MIT](LICENSE) © 2026 Pratik. The demo video in `media/` and its source in
 `claude-kudos-demo/` are released under the same license. Remotion, used to render
 the video, is licensed separately; see [remotion.dev/license](https://remotion.dev/license).
+
+## Project status
+
+**Active hackathon prototype.** The sensing pipeline works end to end on real hardware
+(see [Raw footage](#raw-footage)); the next step is capturing labelled traces
+(Roadmap #3). Expect breaking changes until v1.
