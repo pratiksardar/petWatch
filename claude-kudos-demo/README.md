@@ -1,6 +1,6 @@
 # Pet Watch — hackathon demo video
 
-A 75-second, 1080p30 submission video, composed in [Remotion](https://remotion.dev) from the four
+An 81-second, 1080p30 submission video, composed in [Remotion](https://remotion.dev) from the four
 real demo reels (dog at the water bowl + bench test of the live dashboard).
 
 **Output:** `out/pet-watch-demo-final.mp4` (loudness-normalised to -16 LUFS for web)
@@ -15,7 +15,8 @@ real demo reels (dog at the water bowl + bench test of the live dashboard).
 | 4 | 0:30 | How it works: Sense → Detect → Learn. | — |
 | 5 | 0:38 | Bench test: raw stream → push-in on the distance readout → counter ticks 7 → 8, synced to the real dashboard. | `bench-a..c.mp4` |
 | 6 | 0:59 | Trust: "It doesn't diagnose. It notices." Key numbers + stack. | — |
-| 7 | 1:08 | Outro: "Notice the drift." | — |
+| 7 | 1:08 | Team: the humans who built it + the Chief Testing Officer. | `team.jpg` |
+| 8 | 1:14 | Outro: "Notice the drift." | — |
 
 Sound design is synthesized with ffmpeg (no licensing): an ambient pad, a heartbeat for the cold open,
 and a sonar ping on every detected visit.

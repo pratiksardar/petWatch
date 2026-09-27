@@ -16,7 +16,7 @@ food bowl, learns that individual's normal rhythm, and flags when it drifts.
 
 [![Watch the demo](media/preview.gif)](media/pet-watch-demo.mp4)
 
-**▶ [Watch the full 75-second demo](media/pet-watch-demo.mp4)** · real footage, real sensor, real dashboard
+**▶ [Watch the full 81-second demo](media/pet-watch-demo.mp4)** · real footage, real sensor, real dashboard
 
 </div>
 
@@ -379,6 +379,13 @@ the detection threshold.
   across ESPHome releases, being the newest part of the display API. If the
   lambda fails to compile, that's the line to check, and falling back to
   `it.print()` with a font fixes it.
+
+## Team
+
+<p align="center">
+  <img src="media/team.jpg" alt="A Pet Watch teammate at the table with our golden retriever beta tester" width="360"><br>
+  <sub>The humans who built it, and the Chief Testing Officer who signed off on every visit.</sub>
+</p>
 
 ## Contributing
 

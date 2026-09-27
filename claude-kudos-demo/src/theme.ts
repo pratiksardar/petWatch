@@ -45,6 +45,7 @@ export const SCENES = {
   how: 240,
   bench: sum(BENCH),
   trust: 270,
+  team: 180,
   outro: 210,
 } as const;
 

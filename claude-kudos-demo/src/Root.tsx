@@ -8,6 +8,7 @@ import {Intro} from './scenes/Intro';
 import {Outro} from './scenes/Outro';
 import {Title} from './scenes/Title';
 import {Trust} from './scenes/Trust';
+import {Team} from './scenes/Team';
 import {FPS, SCENES, TOTAL_FRAMES, sceneStarts, type SceneName} from './theme';
 
 const SCENE_COMPONENTS: Record<SceneName, React.FC> = {
@@ -17,6 +18,7 @@ const SCENE_COMPONENTS: Record<SceneName, React.FC> = {
   how: How,
   bench: Bench,
   trust: Trust,
+  team: Team,
   outro: Outro,
 };
 
