@@ -34,6 +34,22 @@ no cloud. Every visit becomes a row in SQLite, and over days those rows become
 | --- | --- | --- |
 | Ultrasonic echo, 20× a second, streamed raw from an ESP32-C6 over ESPHome. | Self-correcting baseline, 1.5 s walk-past filter, fragments merged into one real visit. | Per-pet rhythm by hour of day; an EWMA flags a 2σ drift. Deviation, never diagnosis. |
 
+## Raw footage
+
+The unedited reels behind the demo: one phone, one sensor, one golden retriever.
+Timestamps in *What you see* are the dashboard's own clock, so you can check each
+count against the frame.
+
+| Clip | What you see |
+| --- | --- |
+| <a href="media/footage/01-bowl-visit-drinking.mp4"><img src="media/footage/01-bowl-visit-drinking.jpg" width="200" alt="Dog drinking from the bowl in front of the sensor"></a><br>**Bowl visit 1: drinking** · 7 s | A teammate holds a water bowl while another holds the ultrasonic sensor at the top of the laptop screen, aimed at the dog. As the head dips in and out, the live distance swings **712 → 163 → 779 → 205 mm** and the badge reads **"in interaction zone · timing"**. Visits today: **1**, logged at **14:28:40**. |
+| <a href="media/footage/02-bowl-visit-closeup.mp4"><img src="media/footage/02-bowl-visit-closeup.jpg" width="200" alt="Close-up of the dog licking right above the sensor"></a><br>**Bowl visit 2: close-up** · 5 s | Tight shot on the dog licking the bowl right above the sensor. The reading hovers at **169–304 mm**, drops to **36 mm** as the snout nudges the transducer, then jumps to **642 mm** as the dog pulls back. Visits: **2**, at **14:30:26**. |
+| <a href="media/footage/03-bowl-visit-sit-drink-leave.mp4"><img src="media/footage/03-bowl-visit-sit-drink-leave.jpg" width="200" alt="Dog sitting in front of the sensor before drinking"></a><br>**Bowl visit 3: sit, drink, leave** · 8 s | The dog sits facing the sensor, is offered the bowl, drinks, and wanders off. The trace shows a dense burst of activity followed by a flat baseline once the dog is gone. Visits: **3**, at **14:30:43**. |
+| <a href="media/footage/04-bench-test-full.mp4"><img src="media/footage/04-bench-test-full.jpg" width="200" alt="Pet Watch dashboard on a laptop during the bench test"></a><br>**Bench test: full take** · 1 min 53 s | The dashboard on its own. **0:00–0:25**: the last-2-minutes chart shows earlier visit bursts while a trig/echo sensor board on jumper wires is held up to the screen. **0:52–1:18**: a second, sealed round ultrasonic probe is waved in front of it. **1:16–1:28**: close-up of the readout: baseline ~140 mm, subject at **163 mm**, **"in interaction zone · timing"**. **1:28–1:50**: the counts panel holds at **7** (last interaction 14:32:44). **~1:50**: a new visit is committed and the counter ticks to **8** at **14:35:03**. |
+
+All four are also cut into the [demo video](media/pet-watch-demo.mp4): visits 1–3 at
+0:10–0:30 and the bench test at 0:38–0:59.
+
 ## Quick start
 
 ```bash
@@ -56,7 +72,7 @@ device is covered under [Firmware](#firmware); wiring lives in [`docs/wiring.md`
 | [`firmware/`](firmware) | ESPHome configs for trig/echo and UART ultrasonic sensors. |
 | [`docs/`](docs) | Wiring diagrams, level shifting, assembly and pre-power checklist. |
 | [`claude-kudos-demo/`](claude-kudos-demo) | The demo video as code: a Remotion project with a storyboard. |
-| [`media/`](media) | Rendered demo video, poster and preview GIF. |
+| [`media/`](media) | Rendered demo video, poster, preview GIF, team photo, and the raw footage in `media/footage/`. |
 
 ---
 
